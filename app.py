@@ -1,7 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 import time
-import whisper
+from faster_whisper import WhisperModel
 
 from config.whisper_config import AUDIO_FILE, SELECTED_MODEL, TRANSCRIPTS_FOLDER, LANGUAGE_CODES
 from utils.logger import get_logger
@@ -26,7 +26,7 @@ def generate_output_file_path(audio_file: str) -> Path:
 
 def load_whisper_model(model_name: str):
     """
-    Loads Whisper model.
+    Loads Whisper model. # open-api whisper.
     """
     try:
         logger.info(f"Loading Whisper model: {model_name}")
