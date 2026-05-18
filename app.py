@@ -5,6 +5,7 @@ import whisper
 
 from config.whisper_config import AUDIO_FILE, SELECTED_MODEL, TRANSCRIPTS_FOLDER, LANGUAGE_CODES
 from utils.logger import get_logger
+from utils.audio_converter import convert_aac_to_wav, format_timestamp
 
 logger = get_logger()
 
@@ -50,12 +51,17 @@ def transcribe_audio(model, audio_file: str) -> str:
     """
     logger.info(f"Started transcription for file: {audio_file}")
     validate_audio_file(audio_file)
-    result = model.transcribe(audio_file, language=LANGUAGE_CODES.TELUGU)
+    try:
+        result = model.transcribe(audio_file)
+    except Exception as error:
+        logger.exception(f"Transcription failed for file: {audio_file}")
+        raise error
+
     formatted_transcript = []
 
     for segment in result["segments"]:
-        start_time = round(segment["start"], 2)
-        end_time = round(segment["end"], 2)
+        start_time = format_timestamp(segment["start"])
+        end_time = format_timestamp(segment["end"])
         text = segment["text"].strip()
         formatted_transcript.append(
             f"[{start_time}s - {end_time}s] {text}"
@@ -83,9 +89,10 @@ def main() -> None:
     """
     try:
         logger.info("VoiceScribe execution started.")
-        output_file_path = generate_output_file_path(AUDIO_FILE)
+        processed_audio_file = convert_aac_to_wav(AUDIO_FILE)
+        output_file_path = generate_output_file_path(processed_audio_file)
         whisper_model = load_whisper_model(SELECTED_MODEL)
-        transcript_text = transcribe_audio(whisper_model, AUDIO_FILE)
+        transcript_text = transcribe_audio(whisper_model, processed_audio_file)
         save_transcript(transcript_text, output_file_path)
         logger.info("VoiceScribe execution completed successfully.")
     except Exception as error:
