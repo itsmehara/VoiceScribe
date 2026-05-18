@@ -220,4 +220,5 @@ __marimo__/
 logs/*
 .idea/*
 audio/*.aac
+audio/*.wav
 transcripts/*.txt
