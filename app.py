@@ -3,7 +3,7 @@ from pathlib import Path
 import time
 from faster_whisper import WhisperModel
 
-from config.whisper_config import AUDIO_FILE, SELECTED_MODEL, TRANSCRIPTS_FOLDER, LANGUAGE_CODES
+from config.whisper_config import AUDIO_FILE, SELECTED_MODEL, TRANSCRIPTS_FOLDER
 from utils.logger import get_logger
 from utils.audio_converter import convert_aac_to_wav, format_timestamp
 
@@ -26,13 +26,17 @@ def generate_output_file_path(audio_file: str) -> Path:
 
 def load_whisper_model(model_name: str):
     """
-    Loads Whisper model. # open-api whisper.
+    Loads Faster Whisper model.
     """
     try:
-        logger.info(f"Loading Whisper model: {model_name}")
-        return whisper.load_model(model_name)
+        logger.info(f"Loading Faster Whisper model: {model_name}")
+        return WhisperModel(
+            model_name,
+            device="cpu",
+            compute_type="int8"
+        )
     except Exception as error:
-        logger.exception(f"Failed to load Whisper model: {model_name}")
+        logger.exception(f"Failed to load Faster Whisper model: {model_name}")
         raise error
 
 
@@ -52,17 +56,17 @@ def transcribe_audio(model, audio_file: str) -> str:
     logger.info(f"Started transcription for file: {audio_file}")
     validate_audio_file(audio_file)
     try:
-        result = model.transcribe(audio_file)
+        segments, info = model.transcribe(audio_file, beam_size=5)
     except Exception as error:
         logger.exception(f"Transcription failed for file: {audio_file}")
         raise error
 
     formatted_transcript = []
 
-    for segment in result["segments"]:
-        start_time = format_timestamp(segment["start"])
-        end_time = format_timestamp(segment["end"])
-        text = segment["text"].strip()
+    for segment in segments:
+        start_time = format_timestamp(segment.start)
+        end_time = format_timestamp(segment.end)
+        text = segment.text.strip()
         formatted_transcript.append(
             f"[{start_time}s - {end_time}s] {text}"
         )
@@ -76,7 +80,6 @@ def save_transcript(transcript_text: str, output_file_path: Path) -> None:
     Saves transcript into output text file.
     """
     sig_encoding = "utf-8-sig"
-    utf_encoding = "utf-8"
     with open(output_file_path, "w", encoding=sig_encoding) as file:
         file.write(transcript_text)
 

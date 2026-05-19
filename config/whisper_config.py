@@ -15,12 +15,13 @@ WHISPER_MODELS = WhisperModels(
 
 
 # Default model selection
-SELECTED_MODEL = WHISPER_MODELS.SMALL
+SELECTED_MODEL = WHISPER_MODELS.MEDIUM
 
 upasana_hnb_discussion1 = "Project_notes_12 May_4_44_pm.aac"
+upasana_hnb_discussion2 = "disc2_upasana_19May_4.49pm.aac"
 aiml_kotni_discussion1 = "KotniRamu_Hara_18 May_8.37_am.aac"
 # Input audio file
-AUDIO_FILE = f"audio/{upasana_hnb_discussion1}"
+AUDIO_FILE = f"audio/{upasana_hnb_discussion2}"
 
 # Output folders
 TRANSCRIPTS_FOLDER = "transcripts"

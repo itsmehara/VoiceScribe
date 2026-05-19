@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -16,7 +17,12 @@ def get_logger(logger_name: str = "voicescribe_logger") -> logging.Logger:
     log_directory = Path(LOG_FOLDER)
     log_directory.mkdir(exist_ok=True)
 
-    log_file_path = log_directory / "voicescribe.log"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    log_file_path = (
+        log_directory /
+        f"voicescribe_{timestamp}.log"
+    )
 
     logger = logging.getLogger(logger_name)
 
@@ -35,29 +41,18 @@ def get_logger(logger_name: str = "voicescribe_logger") -> logging.Logger:
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
-    # ----------------------------------------
-    # Rotating File Handler
-    # ----------------------------------------
-
     file_handler = RotatingFileHandler(
         filename=log_file_path,
         maxBytes=5 * 1024 * 1024,
-        backupCount=5
+        backupCount=5,
+        encoding="utf-8"
     )
 
     file_handler.setFormatter(log_formatter)
 
-    # ----------------------------------------
-    # Console Handler
-    # ----------------------------------------
-
     console_handler = logging.StreamHandler()
 
     console_handler.setFormatter(log_formatter)
-
-    # ----------------------------------------
-    # Add Handlers
-    # ----------------------------------------
 
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
