@@ -20,8 +20,10 @@ SELECTED_MODEL = WHISPER_MODELS.MEDIUM
 upasana_hnb_discussion1 = "Project_notes_12 May_4_44_pm.aac"
 upasana_hnb_discussion2 = "disc2_upasana_19May_4.49pm.aac"
 aiml_kotni_discussion1 = "KotniRamu_Hara_18 May_8.37_am.aac"
+upasana_kt_hnb_session1 = "upasana_kt_hnb_session_1 Jun_3.33 pm.aac"
+upasana_kt_hnb_session01 = "upa_hnb_kt_1 Jun_ 3.33 pm.aac"
 # Input audio file
-AUDIO_FILE = f"audio/{upasana_hnb_discussion2}"
+AUDIO_FILE = f"audio/{upasana_kt_hnb_session01}"
 
 # Output folders
 TRANSCRIPTS_FOLDER = "transcripts"

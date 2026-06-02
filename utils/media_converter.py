@@ -21,7 +21,7 @@ def format_timestamp(seconds: float) -> str:
         f"{remaining_seconds:02d}"
     )
 
-def convert_aac_to_wav(input_audio_file: str) -> str:
+def convert_audio_to_wav(input_audio_file: str) -> str:
     """
     Converts AAC audio file into WAV format using FFmpeg.
     Returns converted WAV file path.
