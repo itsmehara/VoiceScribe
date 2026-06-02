@@ -47,12 +47,22 @@ VoiceScribe is designed with a scalable architecture so it can later support adv
 # Project Structure
 
 ```text
+
 VoiceScribe/
-│
-├── audio/                 # Input audio files
-├── transcripts/           # Generated transcripts
-├── venv/                  # Python virtual environment
 ├── app.py                 # Main application entry point
 ├── requirements.txt       # Python dependencies
 ├── README.md
-└── .gitignore
+├── .gitignore
+├── config/
+│   └── whisper_config.py
+├── utils/
+│   ├── logger.py
+│   └── audio_converter.py
+├── audio/                 # Input audio files
+├── transcripts/           # Generated transcripts
+├── venv/                  # Python virtual environment
+└── logs/
+
+```
+
+
