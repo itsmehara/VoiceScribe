@@ -6,6 +6,8 @@ from faster_whisper import WhisperModel
 from config.whisper_config import AUDIO_FILE, SELECTED_MODEL, TRANSCRIPTS_FOLDER
 from utils.logger import get_logger
 from utils.media_converter import convert_audio_to_wav, format_timestamp
+from core.summarizer import generate_summary
+from config.whisper_config import SUMMARIES_FOLDER
 
 logger = get_logger()
 
@@ -86,19 +88,67 @@ def save_transcript(transcript_text: str, output_file_path: Path) -> None:
     logger.info(f"Transcript saved to: {output_file_path}")
 
 
+def save_summary(summary_text: str, output_file_path: Path) -> None:
+    summary_directory = Path(SUMMARIES_FOLDER)
+    summary_directory.mkdir(exist_ok=True)
+    summary_file = summary_directory / f"{output_file_path.stem}_summary.txt"
+    with open(summary_file, "w", encoding="utf-8-sig") as file: file.write(summary_text)
+    logger.info(f"Summary saved to: {summary_file}")
+
+
+# def main() -> None:
+#     """
+#     Main execution flow.
+#     """
+#     try:
+#         logger.info("VoiceScribe execution started.")
+#         processed_audio_file = convert_audio_to_wav(AUDIO_FILE)
+#         # processed_audio_file = AUDIO_FILE
+#         output_file_path = generate_output_file_path(processed_audio_file)
+#         whisper_model = load_whisper_model(SELECTED_MODEL)
+#         transcript_text = transcribe_audio(whisper_model, processed_audio_file)
+#         save_transcript(transcript_text, output_file_path)
+#         logger.info("VoiceScribe execution completed successfully.")
+#         logger.info("Started meeting summary generation.")
+#         summary_text = generate_summary(transcript_text)
+#         logger.info("Meeting summary generation completed.")
+#         save_summary(summary_text, output_file_path)
+#     except Exception as error:
+#         logger.exception(f"VoiceScribe execution failed. Error: {error}")
+
+
+def run_audio_conversion() -> tuple[str, Path]:
+    logger.info("Started audio conversion stage.")
+    processed_audio_file = convert_audio_to_wav(AUDIO_FILE)
+    output_file_path = generate_output_file_path(processed_audio_file)
+    logger.info("Completed audio conversion stage.")
+    return processed_audio_file, output_file_path
+
+
+def run_transcription(processed_audio_file: str, output_file_path: Path) -> str:
+    logger.info("Started transcription stage.")
+    whisper_model = load_whisper_model(SELECTED_MODEL)
+    transcript_text = transcribe_audio(whisper_model, processed_audio_file)
+    save_transcript(transcript_text, output_file_path)
+    logger.info("Completed transcription stage.")
+    return transcript_text
+
+
+def run_summary_generation(transcript_text: str, output_file_path: Path) -> None:
+    logger.info("Started summary generation stage.")
+    summary_text = generate_summary(transcript_text)
+    save_summary(summary_text, output_file_path)
+    logger.info("Completed summary generation stage.")
+
+
 def main() -> None:
-    """
-    Main execution flow.
-    """
     try:
         logger.info("VoiceScribe execution started.")
-        processed_audio_file = convert_audio_to_wav(AUDIO_FILE)
-        # processed_audio_file = AUDIO_FILE
-        output_file_path = generate_output_file_path(processed_audio_file)
-        whisper_model = load_whisper_model(SELECTED_MODEL)
-        transcript_text = transcribe_audio(whisper_model, processed_audio_file)
-        save_transcript(transcript_text, output_file_path)
+        processed_audio_file, output_file_path = run_audio_conversion()
+        transcript_text = run_transcription(processed_audio_file, output_file_path)
+        run_summary_generation(transcript_text, output_file_path)
         logger.info("VoiceScribe execution completed successfully.")
+
     except Exception as error:
         logger.exception(f"VoiceScribe execution failed. Error: {error}")
 

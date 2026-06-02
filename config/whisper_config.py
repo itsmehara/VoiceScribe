@@ -27,6 +27,7 @@ except Exception as error:
 
 # Input audio file
 AUDIO_FILE = f"audio/{audio_config['selected_audio']}"
+SUMMARIES_FOLDER = "summaries"
 
 # Output folders
 TRANSCRIPTS_FOLDER = "transcripts"
