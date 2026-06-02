@@ -1,4 +1,6 @@
 from collections import namedtuple
+import yaml
+from pathlib import Path
 
 WhisperModels = namedtuple(
     "WhisperModels",
@@ -13,17 +15,18 @@ WHISPER_MODELS = WhisperModels(
     LARGE="large"
 )
 
-
 # Default model selection
 SELECTED_MODEL = WHISPER_MODELS.MEDIUM
 
-upasana_hnb_discussion1 = "Project_notes_12 May_4_44_pm.aac"
-upasana_hnb_discussion2 = "disc2_upasana_19May_4.49pm.aac"
-aiml_kotni_discussion1 = "KotniRamu_Hara_18 May_8.37_am.aac"
-upasana_kt_hnb_session1 = "upasana_kt_hnb_session_1 Jun_3.33 pm.aac"
-upasana_kt_hnb_session01 = "upa_hnb_kt_1 Jun_ 3.33 pm.aac"
+config_file = Path("config/audio_config.yaml")
+try:
+    with open(config_file, "r") as file:
+        audio_config = yaml.safe_load(file)
+except Exception as error:
+    raise RuntimeError(f"Failed to load configuration: {error}")
+
 # Input audio file
-AUDIO_FILE = f"audio/{upasana_kt_hnb_session01}"
+AUDIO_FILE = f"audio/{audio_config['selected_audio']}"
 
 # Output folders
 TRANSCRIPTS_FOLDER = "transcripts"
