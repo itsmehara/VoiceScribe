@@ -96,27 +96,6 @@ def save_summary(summary_text: str, output_file_path: Path) -> None:
     logger.info(f"Summary saved to: {summary_file}")
 
 
-# def main() -> None:
-#     """
-#     Main execution flow.
-#     """
-#     try:
-#         logger.info("VoiceScribe execution started.")
-#         processed_audio_file = convert_audio_to_wav(AUDIO_FILE)
-#         # processed_audio_file = AUDIO_FILE
-#         output_file_path = generate_output_file_path(processed_audio_file)
-#         whisper_model = load_whisper_model(SELECTED_MODEL)
-#         transcript_text = transcribe_audio(whisper_model, processed_audio_file)
-#         save_transcript(transcript_text, output_file_path)
-#         logger.info("VoiceScribe execution completed successfully.")
-#         logger.info("Started meeting summary generation.")
-#         summary_text = generate_summary(transcript_text)
-#         logger.info("Meeting summary generation completed.")
-#         save_summary(summary_text, output_file_path)
-#     except Exception as error:
-#         logger.exception(f"VoiceScribe execution failed. Error: {error}")
-
-
 def run_audio_conversion() -> tuple[str, Path]:
     logger.info("Started audio conversion stage.")
     processed_audio_file = convert_audio_to_wav(AUDIO_FILE)
@@ -125,19 +104,21 @@ def run_audio_conversion() -> tuple[str, Path]:
     return processed_audio_file, output_file_path
 
 
-def run_transcription(processed_audio_file: str, output_file_path: Path) -> str:
+def run_transcription(processed_audio_file: str, output_file_path: Path) -> Path:
     logger.info("Started transcription stage.")
     whisper_model = load_whisper_model(SELECTED_MODEL)
     transcript_text = transcribe_audio(whisper_model, processed_audio_file)
     save_transcript(transcript_text, output_file_path)
     logger.info("Completed transcription stage.")
-    return transcript_text
+    return output_file_path
 
 
-def run_summary_generation(transcript_text: str, output_file_path: Path) -> None:
+def run_summary_generation(transcript_file_path: Path) -> None:
     logger.info("Started summary generation stage.")
+    with open(transcript_file_path, "r", encoding="utf-8-sig") as file:
+        transcript_text = file.read()
     summary_text = generate_summary(transcript_text)
-    save_summary(summary_text, output_file_path)
+    save_summary(summary_text, transcript_file_path)
     logger.info("Completed summary generation stage.")
 
 
@@ -145,8 +126,8 @@ def main() -> None:
     try:
         logger.info("VoiceScribe execution started.")
         processed_audio_file, output_file_path = run_audio_conversion()
-        transcript_text = run_transcription(processed_audio_file, output_file_path)
-        run_summary_generation(transcript_text, output_file_path)
+        transcript_file_path = run_transcription(processed_audio_file, output_file_path)
+        run_summary_generation(transcript_file_path)
         logger.info("VoiceScribe execution completed successfully.")
 
     except Exception as error:
