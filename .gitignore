@@ -225,3 +225,7 @@ audio/*.ogg
 audio/*.opus
 audio/*
 transcripts/*.txt
+summaries/*
+summaries/*.txt
+
+config/audio_config.yaml
