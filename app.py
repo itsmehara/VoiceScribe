@@ -56,7 +56,7 @@ def transcribe_audio(model, audio_file: str) -> str:
     logger.info(f"Started transcription for file: {audio_file}")
     validate_audio_file(audio_file)
     try:
-        segments, info = model.transcribe(audio_file, beam_size=5, language="en")
+        segments, info = model.transcribe(audio_file, beam_size=5, language="en", vad_filter=True)
     except Exception as error:
         logger.exception(f"Transcription failed for file: {audio_file}")
         raise error
