@@ -1,0 +1,40 @@
+[project]
+name = "voicescribe"
+version = "0.1.0"
+description = "Offline speech-to-text and summarization pipeline for local meeting intelligence."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+    { name = "Hara" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "faster-whisper>=2024.3.0",
+    "PyYAML>=6.0",
+    "ollama>=0.0.0"
+]
+
+[project.scripts]
+voicescribe = "app:main"
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel", "build"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+config = ["*.yaml"]
+
+py_modules = ["app"]
+
+[tool.setuptools.packages.find]
+include = ["config", "core", "utils"]

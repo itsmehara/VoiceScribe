@@ -1,0 +1,40 @@
+# VoiceScribe config template
+#
+# 1. If a config file exists in the current working folder,
+#    VoiceScribe will use it automatically.
+# 2. Use CLI flags to override any individual value.
+# 3. If neither CLI nor workspace config provides a value,
+#    the default project config is used.
+
+selected_audio: "audio/selva_requirement Ptt 2026-06-17 at 19.19.48.ogg"
+
+whisper:
+  model: "medium"
+  device: "cpu"
+  compute_type: "int8"
+  language: "en"
+  vad_filter: true
+  beam_size: 5
+
+summary:
+  model: "qwen3:4b"
+  prompt_template: |
+    Analyze the meeting transcript and generate a structured summary.
+
+    Transcript:
+    {transcript}
+
+output:
+  transcripts_folder: "transcripts"
+  summaries_folder: "summaries"
+  logs_folder: "logs"
+
+pipeline:
+  skip_conversion: false
+  skip_summary: false
+
+ffmpeg:
+  path: "ffmpeg"
+
+logging:
+  level: "INFO"

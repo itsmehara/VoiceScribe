@@ -1,46 +1,57 @@
+from typing import Optional
+
 import ollama
 
 
-def generate_summary(transcript_text: str) -> str:
-    prompt = f"""
-    Analyze the meeting transcript and generate a structured summary.
+def build_prompt(transcript_text: str, prompt_template: Optional[str] = None) -> str:
+    if prompt_template:
+        return prompt_template.format(transcript=transcript_text)
 
-    Rules:
-    - Use only information present in the transcript.
-    - Do not invent facts, decisions, actions, or participants.
-    - Use concise bullet points.
-    - Prioritize Key Points over all other sections.
-    - Generate up to 50 total bullet points across all sections.
-    - Purpose: maximum 5 points.
-    - Key Points: maximum 20 points.
-    - Decisions: maximum 20 points.
-    - Action Items: maximum 20 points.
-    - Next Steps: maximum 20 points.
-    - If a section has insufficient information, redistribute the remaining points to other sections, giving highest priority to Key Points.
-    - Omit empty sections.
-    - Focus on technical discussions, important observations, decisions, commitments, blockers, risks, and follow-up activities.
-    
-    Return in the following format:
-    
-    ## Purpose
+    return f"""
+Analyze the meeting transcript and generate a structured summary.
 
-    ## Key Points
-    
-    ## Decisions
-    
-    ## Action Items
-    
-    ## Next Steps
-    
-    Transcript:
-    
-    {transcript_text}
-    """
+Rules:
+- Use only information present in the transcript.
+- Do not invent facts, decisions, actions, or participants.
+- Use concise bullet points.
+- Prioritize Key Points over all other sections.
+- Generate up to 50 total bullet points across all sections.
+- Purpose: maximum 5 points.
+- Key Points: maximum 20 points.
+- Decisions: maximum 20 points.
+- Action Items: maximum 20 points.
+- Next Steps: maximum 20 points.
+- If a section has insufficient information, redistribute the remaining points to other sections, giving highest priority to Key Points.
+- Omit empty sections.
+- Focus on technical discussions, important observations, decisions, commitments, blockers, risks, and follow-up activities.
 
+Return in the following format:
+
+## Purpose
+
+## Key Points
+
+## Decisions
+
+## Action Items
+
+## Next Steps
+
+Transcript:
+
+{transcript_text}
+"""
+
+
+def generate_summary(
+    transcript_text: str,
+    model_name: str = "qwen3:4b",
+    prompt_template: Optional[str] = None,
+) -> str:
+    prompt = build_prompt(transcript_text, prompt_template)
     response = ollama.chat(
-        model="qwen3:4b",
+        model=model_name,
         options={"temperature": 0},
-        messages=[{"role": "user", "content": prompt}]
+        messages=[{"role": "user", "content": prompt}],
     )
-
     return response["message"]["content"]
