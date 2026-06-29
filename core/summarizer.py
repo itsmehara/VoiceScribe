@@ -42,5 +42,5 @@ def generate_summary(transcript_text: str) -> str:
         options={"temperature": 0},
         messages=[{"role": "user", "content": prompt}]
     )
- 
+
     return response["message"]["content"]
